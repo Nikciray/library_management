@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}{{book.title}}{% endblock%}
+
+{% block content %}
+<div class='mb-6'>
+    <a href='#' onclick="history.back(); return false;" class='p-3 outline outline-gray-300 hover:outline-gray-600 rounded '>< back</a>
+</div>
+<div class="grid grid-cols-4 gap-6 h-[100vh]">
+    <div class='col-span-2 grid justify-items-center items-center h-[70vh]'>
+        {% if book.image_url %}
+        <img src="{{book.image_url.url}}" class="rounded-xl w-[70%] h-[40vw]">
+        {%else%}
+        <img src="{{'https://fakeimg.pl/667x1000/cc6600' }}" class="rounded-xl w-[70%] h-[40vw]">
+        {% endif %}
+    </div>
+    <div class="col-span-2 p-6  rounded-xl">
+        
+        <div class="my-4 mx-4  grid justify-items-start items-center h-[70vh]">
+            <div class='mx-5 '>
+                <h1 class='mb-6 text-5xl font-bold'>{{book.title}}</h1>
+                <h3 class='mb-6 text-2xl font-semibold'>by {{book.author.name}} <span class="text-xs">{{book.publication_date}}</span></h3>
+                {% if book.description %}
+                <p class='text-gray-700 my-3'>
+                    {{book.description}}
+                </p>
+                {% endif %}
+                <h4 class="font-bold text-xl mb-4 ">
+                
+                        {% for genre in book.genre.all %}
+                            <span class="text-sky-800 bg-cyan-400 rounded-md text-small mr-2 px-1">
+                                {{ genre.name }}
+                            </span>
+                        {% endfor %}
+                    
+                </h4>
+                
+                {% if book.stock > 0 %}
+                <span class='text-sky rounded-lg text-small px-1 py-1 my-4 font-bold'>Available Quantity : <span class="text-green-600 font-bold">{{book.stock}} stock(s)</span></span>
+                {% else %}
+                <span class='text-sky bg-red-500 rounded-lg text-small px-1 py-1 '>Unavailable</span>
+                {% endif%}
+            </div>
+           
+            {% comment %} <div class="mt-5">
+                <button type="button" class="inline-flex items-center rounded-md border border-transparent bg-gray-800 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-gray-900">Add to bucket</button>
+            </div> {% endcomment %}
+        </div>
+    </div>
+</div>
+{% comment %} <div class='mt-6 px-6 py-12 bg-gray-100 rounded-xl'>
+    <h2 class='mb-12 text-2xl text-center'>Related Items</h2>
+    <div class='grid grid-cols-3 gap-3'>
+        {% for item in related_items %}
+        <div>
+            <a href="{% url 'item:detail' item.id %}">
+                <div>
+                    {% if item.image %}
+                    <img src="{{item.image.url}}" class='rounded-t-xl'>
+                    {% endif %}
+                </div>
+                <div class="p-6 bg-white rounded-b-xl">
+                    <h2 class="text-2xl">{{ item.name }}</h2>
+                    <p class='text-gray-500'>Price {{ item.price }}</p>
+                </div>
+            </a>
+        </div>  
+        {% endfor %}
+    </div>
+</div> {% endcomment %}
+<script>
+    let colors=["lime", "amber", "green", "cyan", "sky"];
+    function getRandomElement(arr) {
+        // Generate a random index within the array length
+        const randomIndex = Math.floor(Math.random() * arr.length);
+        
+        // Return the element at the random index
+        return arr[randomIndex];
+    }
+    
+    // Get a random element from the array
+    const bgColor = getRandomElement(colors);
+    
+</script>
+{% endblock%}

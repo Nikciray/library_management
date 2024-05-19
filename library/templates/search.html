@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block title %}{{item.name}}{% endblock%}
+
+{% block content %}
+
+
+<div class='grid grid-cols-6 gap-5'>
+  <div class='col-span-5'>
+    <form method="GET" action="{% url 'library:search' 1 %}" class='flex gap-5'>
+      <input name='query' class="flex-1 px-6 py-4 border rounded-xl" type='text' value="{{ query }}" placeholder="Find a book name , author or ..." />
+      <button type='submit' class='py-3 px-6 mt-2 text-lg text-white bg-teal-500 hover:bg-teal-700 rounded-xl w-[120px]'> Search </button>
+    </form>
+  </div>
+ 
+  <div class='col-span-1 font-semibold'>
+    <h5 class='text-cyan-600'>Genres</h5>
+    <p>
+      {% for genre in genres %}
+          {% if genre.id == genre_id %} 
+              
+                  <a href="{% url 'library:search' 1 %}?query={{query}}&genre_id={{genre.id}}"><span class='bg-blue-200 rounded p-1 hover:bg-blue-350'>{{genre.name}}<span></a>
+              
+          {% else %}
+                  <a class='bg-cyan-100 hover:bg-cyan-300' href="{% url 'library:search' 1 %}?query={{query}}&genre_id={{genre.id}}">{{genre.name}}</a>
+              
+          {% endif %}
+      {% endfor%}
+      
+        <a href="{% url 'library:search' 1 %}" 
+            class='mt-2 py-1 px-2 bg-yellow-500 text-lg inline-block rounded-xl text-white hover:text-black'
+        >Clear Filters</a>
+    
+    </p>
+</div>
+  
+</div>
+{% if query %}
+<h1 class='font-bold text-start text-3xl'>{{title}}</h1>
+{% else %}
+<h1 class='font-bold text-start text-4xl'>Explore : </h1>
+{% endif %}
+
+<div class='my-3 grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4'>
+
+    
+    {% for book in books.object_list %}
+    <a class="max-w-lg border border-indigo-300 rounded-2xl hover:shadow-xl hover:shadow-indigo-80 flex flex-col items-start"
+        href={%url 'library:book_detail' book.id %}>
+        {% if book.image_url %}
+        {% comment %} book.image_url.url '[url].url'is need to display images in media url {% endcomment %}
+        <img src={{book.image_url.url}} class="shadow rounded-lg overflow-hidden w-full max-h-[350px]" > 
+        {% else %}
+        <img src={{'https://fakeimg.pl/667x1000/cc6600'}} class="shadow rounded-lg overflow-hidden w-full max-h-[350px]" >
+        {% endif %}
+        <div class="my-4 mx-4 ">
+            <div class='mx-5'>
+                <h4 class="font-bold text-xl">{{book.title}}  
+                    {% for gen in book.genre.object_list %}
+                    <span class='text-sky bg-amber-500 rounded-lg text-xs'>
+                        {{gen}}
+                    </span>
+                    {% endfor %}
+                </h4>
+                {% if book.description  %}
+                <p class="mt-2 text-gray-600 text-sm">{{book.description}}
+                </p>
+                {% endif %}
+                <p class='mt-3'>
+                {% if book.count > 0 %}
+                <span class='text-sky rounded-lg text-small px-1 py-1 my-4 font-bold'>Available : <span class="text-green-600 font-bold">{{book.count}} stock(s)</span></span>
+                {% else %}
+                <span class='text-sky bg-red-500 rounded-lg text-small px-1 py-1 my-4'>Unavailable</span>
+                {% endif%}
+                </p>
+            </div>
+            
+            {% comment %} <div class="mt-5">
+                <button type="button" class="inline-flex items-center rounded-md border border-transparent bg-gray-800 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-gray-900">Add to bucket</button>
+            </div> {% endcomment %}
+        </div>
+    </a>
+       
+    {% endfor%}
+    
+    </div>
+    <p class='my-8  justify-self-start'>
+        <a href={%url 'library:index'  %} class='p-3 outline outline-gray-300 hover:outline-gray-600 rounded'>< back to home</a>
+    </p>
+<nav aria-label="Page navigation " class='flex justify-center items-center'>
+    
+    <ul class="list-style-none flex">
+        {% if books.has_previous %}
+          <li>
+            <a class="relative block rounded-full  px-3 py-1.5 text-sm text-black transition-all duration-300 dark:hover:bg-neutral-700 dark:hover:text-white"
+                href="{% url 'books:search' books.previous_page_number %}"
+              >Previous</a>
+          </li>
+        {% endif %}
+      
+      <li>
+        <a
+          class="relative block rounded-full bg-transparent px-3 py-1.5 text-sm text-neutral-600 transition-all duration-300 hover:bg-neutral-100  text-black dark:hover:bg-neutral-700 dark:hover:text-white"
+          href=""
+          >{{books.number}}</a
+        >
+      </li>
+      {% if books.has_next %}
+      <li>
+        <a
+          class="relative block rounded-full  px-3 py-1.5 text-sm text-black transition-all duration-300 hover:bg-neutral-100  dark:hover:bg-neutral-700 dark:hover:text-white"
+          href="{% url 'books:search' books.next_page_number %}">Next</a>
+      </li>
+        {% endif %}
+      
+    </ul>
+{% endblock %}
